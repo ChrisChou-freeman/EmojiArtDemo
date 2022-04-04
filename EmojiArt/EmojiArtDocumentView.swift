@@ -22,15 +22,26 @@ struct EmojiArtDocumentView: View {
     var documentBody: some View {
         GeometryReader{ geometry in
             ZStack{
-                Color.yellow
-                ForEach(self.document.emojis) { emoji in
-                    Text(emoji.text)
-                        .font(.system(size: self.fontSize(for: emoji)))
-                        .position(self.position(for: emoji, in: geometry))
+                Color.white.overlay(
+                    OptionalImage(uiImage: self.document.backgroundImage)
+                        .scaleEffect(self.zoomScale)
+                        .position(self.convertFromEmojiCoordinates((0, 0), in: geometry))
+                )
+                .gesture(doubleTapToZoom(in: geometry.size))
+                if self.document.backgroundImageFetchStatus == .fetching{
+                    ProgressView()
+                        .scaleEffect(2.0)
+                }else{
+                    ForEach(self.document.emojis) { emoji in
+                        Text(emoji.text)
+                            .font(.system(size: self.fontSize(for: emoji)))
+                            .scaleEffect(self.zoomScale)
+                            .position(self.position(for: emoji, in: geometry))
+                    }
                 }
             }
-            .onDrop(of: [.plainText], isTargeted: nil){ providers, location in
-                drop(providers: providers, at: location, in: geometry)
+            .onDrop(of: [.plainText, .url, .image], isTargeted: nil){ providers, location in
+                self.drop(providers: providers, at: location, in: geometry)
             }
         }
     }
@@ -38,6 +49,31 @@ struct EmojiArtDocumentView: View {
     var palette: some View {
         ScrollingEmojisView(emojis: self.testEmojis)
             .font(.system(size: self.defaultEmojiFontSize))
+    }
+    
+    private func drop(providers: [NSItemProvider], at location: CGPoint, in geometry: GeometryProxy) -> Bool {
+        var found = providers.loadObjects(ofType: URL.self) { url in
+            self.document.setBackground(.url(url.imageURL))
+        }
+        if !found{
+            found = providers.loadObjects(ofType: UIImage.self){ image in
+                if let data = image.jpegData(compressionQuality: 1.0) {
+                    document.setBackground(.imageData(data))
+                }
+            }
+        }
+        if !found{
+            found = providers.loadObjects(ofType: String.self){ string in
+                if let emoji = string.first, emoji.isEmoji{
+                    self.document.addEmoji(
+                        String(emoji),
+                        at: self.convertToEmojiCoordinates(location, geometry: geometry),
+                        size: self.defaultEmojiFontSize / self.zoomScale
+                    )
+                }
+            }
+        }
+        return found
     }
     
     private func fontSize(for emoji: EmojiArtModel.Emoji) -> CGFloat {
@@ -51,30 +87,36 @@ struct EmojiArtDocumentView: View {
     private func convertFromEmojiCoordinates(_ location: (x: Int, y: Int), in geometry: GeometryProxy) -> CGPoint{
         let center = geometry.frame(in: .local).center
         return CGPoint(
-            x: center.x + CGFloat(location.x),
-            y: center.y + CGFloat(location.y)
+            x: center.x + CGFloat(location.x) * self.zoomScale,
+            y: center.y + CGFloat(location.y) * self.zoomScale
         )
     }
     
     private func convertToEmojiCoordinates(_ location: CGPoint, geometry: GeometryProxy) -> (x: Int, y: Int) {
         let center = geometry.frame(in: .local).center
         let location = CGPoint(
-            x: location.x - center.x,
-            y: location.y - center.y
+            x: (location.x - center.x) / self.zoomScale,
+            y: (location.y - center.y) / self.zoomScale
         )
         return (Int(location.x), Int(location.y))
     }
     
-    private func drop(providers: [NSItemProvider], at location: CGPoint, in geometry: GeometryProxy) -> Bool {
-        return providers.loadObjects(ofType: String.self){ string in
-            if let emoji = string.first, emoji.isEmoji{
-                self.document.addEmoji(
-                    String(emoji),
-                    at: self.convertToEmojiCoordinates(location, geometry: geometry),
-                    size: self.defaultEmojiFontSize
-                )
-            }
+    @State private var zoomScale: CGFloat = 1
+    private func zoomToFit(_ image: UIImage?, in size: CGSize){
+        if let image = image, image.size.width > 0, image.size.height > 0, size.width > 0, size.height > 0 {
+            let hzoom = size.width / image.size.width
+            let vzoom  = size.height / image.size.height
+            zoomScale = min(hzoom, vzoom)
         }
+    }
+    
+    private func doubleTapToZoom(in size: CGSize) -> some Gesture {
+        TapGesture(count: 2)
+            .onEnded {
+                withAnimation{
+                    self.zoomToFit(self.document.backgroundImage, in: size)
+                }
+            }
     }
     
 }
