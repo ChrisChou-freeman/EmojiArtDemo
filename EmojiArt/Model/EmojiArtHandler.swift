@@ -6,10 +6,10 @@
 //
 
 import Foundation
-
 import SwiftUI
 
-class EmojiArtDocument: ObservableObject {
+
+class EmojiArtHandler: ObservableObject {
     @Published private(set) var emojiArt: EmojiArtModel {
         didSet {
             if self.background != oldValue.background{

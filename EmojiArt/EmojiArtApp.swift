@@ -7,13 +7,18 @@
 
 import SwiftUI
 
+// need to do
+// 1. select item and move item
+// 2. select item and zoom item
+// 3. select item and delete item
+
 @main
 struct EmojiArtApp: App {
-    let document  = EmojiArtDocument()
+    let document  = EmojiArtHandler()
     
     var body: some Scene {
         WindowGroup {
-            EmojiArtDocumentView(document: document)
+            MainView(document: document)
         }
     }
 }
