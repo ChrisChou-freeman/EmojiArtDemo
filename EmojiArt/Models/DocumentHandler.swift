@@ -9,8 +9,8 @@ import Foundation
 import SwiftUI
 
 
-class EmojiArtHandler: ObservableObject {
-    @Published private(set) var emojiArt: EmojiArtModel {
+class DocumentHandler: ObservableObject {
+    @Published private(set) var emojiArt: DocumentModel {
         didSet {
             if self.background != oldValue.background{
                 fetchBackgroundImageDataIfNeccessary()
@@ -19,11 +19,11 @@ class EmojiArtHandler: ObservableObject {
     }
     @Published var backgroundImage: UIImage?
     @Published var backgroundImageFetchStatus = BackgroundImageFetchStatus.idle
-    var emojis: [EmojiArtModel.Emoji] {self.emojiArt.emojis}
-    var background: EmojiArtModel.Background {self.emojiArt.background}
+    var emojis: [DocumentModel.Emoji] {self.emojiArt.emojis}
+    var background: DocumentModel.Background {self.emojiArt.background}
     
     init(){
-        self.emojiArt = EmojiArtModel()
+        self.emojiArt = DocumentModel()
     }
     
     private func fetchBackgroundImageDataIfNeccessary(){
@@ -35,7 +35,7 @@ class EmojiArtHandler: ObservableObject {
                 let imageData = try? Data(contentsOf: url)
                 DispatchQueue.main.async { [weak self] in
                     // handle muitiple image drag to background
-                    if self?.emojiArt.background == EmojiArtModel.Background.url(url){
+                    if self?.emojiArt.background == DocumentModel.Background.url(url){
                         self?.backgroundImageFetchStatus = .idle
                         if imageData != nil {
                             self?.backgroundImage = UIImage(data: imageData!)
@@ -51,7 +51,7 @@ class EmojiArtHandler: ObservableObject {
         
     }
     
-    func setBackground(_ background: EmojiArtModel.Background) {
+    func setBackground(_ background: DocumentModel.Background) {
         self.emojiArt.background = background
         print("background set to \(background)")
     }
@@ -60,16 +60,33 @@ class EmojiArtHandler: ObservableObject {
         self.emojiArt.addEmoji(emoji, at: location, size: Int(size))
     }
     
-    func moveEmoji(_ emoji: EmojiArtModel.Emoji, by offset: CGSize){
+    func moveEmoji(_ emoji: DocumentModel.Emoji, by offset: CGSize){
         if let index = self.emojiArt.emojis.index(matching: emoji){
             self.emojiArt.emojis[index].x += Int(offset.width)
             self.emojiArt.emojis[index].y += Int(offset.height)
         }
     }
     
-    func scaleEmoji(_ emoji: EmojiArtModel.Emoji, by scale: CGFloat){
+    func moveEmojiWithIDs(with emojiIDs: [Int], by offset: CGSize){
+        for emojiID in emojiIDs{
+            if let index = self.emojiArt.emojis.firstIndex(where: {$0.id == emojiID}){
+                self.emojiArt.emojis[index].x += Int(offset.width)
+                self.emojiArt.emojis[index].y += Int(offset.height)
+            }
+        }
+    }
+    
+    func scaleEmoji(_ emoji: DocumentModel.Emoji, by scale: CGFloat){
         if let index = self.emojiArt.emojis.index(matching: emoji){
             self.emojiArt.emojis[index].size = Int((CGFloat(self.emojiArt.emojis[index].size) * scale).rounded(.toNearestOrAwayFromZero))
+        }
+    }
+    
+    func scalEmojiWithIDs(with emojiIDs: [Int], by scale: CGFloat){
+        for emojiID in emojiIDs{
+            if let index = self.emojiArt.emojis.firstIndex(where: {$0.id == emojiID}){
+                self.emojiArt.emojis[index].size = Int((CGFloat(self.emojiArt.emojis[index].size) * scale).rounded(.toNearestOrAwayFromZero))
+            }
         }
     }
     

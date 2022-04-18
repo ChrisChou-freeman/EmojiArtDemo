@@ -14,11 +14,11 @@ import SwiftUI
 
 @main
 struct EmojiArtApp: App {
-    let document  = EmojiArtHandler()
+    let document  = DocumentHandler()
     
     var body: some Scene {
         WindowGroup {
-            MainView(document: document)
+            DocView(document: document)
         }
     }
 }

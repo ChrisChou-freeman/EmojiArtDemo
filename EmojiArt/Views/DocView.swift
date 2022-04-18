@@ -7,18 +7,21 @@
 import SwiftUI
 
 
-struct MainView: View {
-    @ObservedObject var document: EmojiArtHandler
+struct DocView: View {
+    @ObservedObject var document: DocumentHandler
     let testEmojis = "🐵🐒🦍🦧🐶🐕🦮🐕‍🦺🐩🐺🦊🦝🐱🐈🐈‍⬛🦁🐯🐆🐴🐎"
     let defaultEmojiFontSize: CGFloat = 40
     @State var steadyStatePanOffset = CGSize.zero
     @GestureState var gesturePanOffset = CGSize.zero
     @State var steadyStateZoomScale: CGFloat = 1
     @GestureState var gestureZoomScale: CGFloat = 1
-    @State var selectedElement: String = ""
+    // for select element
+    @State var selectedElements: [Int] = []
+    @GestureState var selectedOffset: CGSize = CGSize.zero
+    @GestureState var selectedZoom: CGFloat = 1
     
     var body: some View {
-        VStack(spacing: 0){
+        VStack(spacing: 0) {
             self.documentBody
             self.palette
         }
@@ -28,13 +31,11 @@ struct MainView: View {
         ScrollingEmojisView(emojis: self.testEmojis)
             .font(.system(size: self.defaultEmojiFontSize))
     }
-
-    
 }
 
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView(document: EmojiArtHandler())
+        DocView(document: DocumentHandler())
     }
 }

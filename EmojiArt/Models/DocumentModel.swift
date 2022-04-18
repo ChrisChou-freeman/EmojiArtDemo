@@ -1,5 +1,5 @@
 //
-//  EmojiArtModel.swift
+//  DocumentModel.swift
 //  EmojiArt
 //
 //  Created by ChrisChou on 2022/3/31.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct EmojiArtModel {
+struct DocumentModel {
     var background = Background.blank
     var emojis: [Emoji] = []
     private var uniqueEmojiId = 0

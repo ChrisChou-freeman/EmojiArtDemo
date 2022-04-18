@@ -8,17 +8,18 @@
 import SwiftUI
 
 
-extension MainView{
+extension DocView{
     
     private var panOffset: CGSize {
         (self.steadyStatePanOffset + self.gesturePanOffset) * self.zoomScale
     }
-    var zoomScale: CGFloat {
+    private var zoomScale: CGFloat {
         self.steadyStateZoomScale * self.gestureZoomScale
     }
     
     var documentBody: some View {
-        GeometryReader{ geometry in
+        GeometryReader{
+            geometry in
             ZStack{
                 Color.white.overlay(
                     OptionalImage(uiImage: self.document.backgroundImage)
@@ -26,6 +27,7 @@ extension MainView{
                         .position(self.convertFromEmojiCoordinates((0, 0), in: geometry))
                 )
                 .gesture(doubleTapToZoom(in: geometry.size))
+                .gesture(singleTapToUnselete())
                 if self.document.backgroundImageFetchStatus == .fetching{
                     ProgressView()
                         .scaleEffect(2.0)
@@ -33,8 +35,11 @@ extension MainView{
                     ForEach(self.document.emojis) { emoji in
                         let element = Text(emoji.text)
                         Group{
-                            if emoji.text == self.selectedElement {
-                                element.border(.black)
+                            if self.selectedElements.contains(emoji.id) {
+                                element
+                                    .border(.black, width: 2)
+                                    .offset(self.selectedOffset)
+                                    .scaleEffect(self.selectedZoom)
                             }else{
                                 element
                             }
@@ -42,8 +47,12 @@ extension MainView{
                         .font(.system(size: self.fontSize(for: emoji)))
                         .scaleEffect(self.zoomScale)
                         .position(self.position(for: emoji, in: geometry))
-                        .onTapGesture {
-                            self.selectedElement = emoji.text
+                        .onTapGesture{
+                            if self.selectedElements.contains(emoji.id){
+                                self.selectedElements.remove(at: selectedElements.firstIndex(where: {$0 == emoji.id})!)
+                            }else{
+                                self.selectedElements.append(emoji.id)
+                            }
                         }
                     }
                     
@@ -82,6 +91,13 @@ extension MainView{
         return found
     }
     
+    func singleTapToUnselete() -> some Gesture{
+        TapGesture(count: 1)
+            .onEnded{
+                self.selectedElements.removeAll()
+            }
+    }
+    
     func doubleTapToZoom(in size: CGSize) -> some Gesture {
         TapGesture(count: 2)
             .onEnded {
@@ -92,30 +108,51 @@ extension MainView{
     }
     
     func zoomGesture() -> some Gesture {
-        MagnificationGesture()
-            .updating(self.$gestureZoomScale){ latestGestureScale, gestureZoomScale, transaction in
-                gestureZoomScale = latestGestureScale
-            }
-            .onEnded{ gestureScaleAtEnd in
-                self.steadyStateZoomScale *= gestureScaleAtEnd
-            }
+        if self.selectedElements.count > 0{
+            return MagnificationGesture()
+                .updating(self.$selectedZoom){ latestGestureScale, selectedZoom, transaction in
+                    selectedZoom = latestGestureScale
+                }
+                .onEnded{gestureScaleAtEnd in
+                    document.scalEmojiWithIDs(with: selectedElements, by: gestureScaleAtEnd)
+                }
+        }else{
+            return MagnificationGesture()
+                .updating(self.$gestureZoomScale){ latestGestureScale, gestureZoomScale, transaction in
+                    gestureZoomScale = latestGestureScale
+                }
+                .onEnded{gestureScaleAtEnd in
+                    self.steadyStateZoomScale *= gestureScaleAtEnd
+                }
+        }
     }
     
-    func panGesture() -> some Gesture {
-        DragGesture()
-            .updating(self.$gesturePanOffset) { latestDragGestureValue ,gesturePanOffset, _ in
-                gesturePanOffset  = latestDragGestureValue.translation / self.zoomScale
-            }
-            .onEnded { finalDragGestureValue in
-                self.steadyStatePanOffset  = self.steadyStatePanOffset + (finalDragGestureValue.translation / self.zoomScale)
-            }
+    func panGesture(forSelected: Bool = false) -> some Gesture {
+        if self.selectedElements.count > 0{
+            return DragGesture()
+                .updating(self.$selectedOffset) { latestDragGestureValue, selectedOffset, _ in
+                    selectedOffset = latestDragGestureValue.translation / self.zoomScale
+                }
+                .onEnded {finalDragGestureValue in
+                    document.moveEmojiWithIDs(with: selectedElements, by: finalDragGestureValue.translation / self.zoomScale)
+                }
+        }else{
+            return DragGesture()
+                .updating(self.$gesturePanOffset) { latestDragGestureValue ,gesturePanOffset, _ in
+                    gesturePanOffset = latestDragGestureValue.translation / self.zoomScale
+                }
+                .onEnded { finalDragGestureValue in
+                    self.steadyStatePanOffset = self.steadyStatePanOffset + (finalDragGestureValue.translation / self.zoomScale)
+                }
+        }
+        
     }
     
-    func fontSize(for emoji: EmojiArtModel.Emoji) -> CGFloat {
+    func fontSize(for emoji: DocumentModel.Emoji) -> CGFloat {
         CGFloat(emoji.size)
     }
     
-    func position(for emoji: EmojiArtModel.Emoji, in geometry: GeometryProxy) -> CGPoint{
+    func position(for emoji: DocumentModel.Emoji, in geometry: GeometryProxy) -> CGPoint{
         self.convertFromEmojiCoordinates((emoji.x, emoji.y), in: geometry)
     }
     

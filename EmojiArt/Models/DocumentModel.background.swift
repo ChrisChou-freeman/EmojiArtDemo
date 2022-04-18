@@ -8,7 +8,7 @@
 import Foundation
 
 
-extension EmojiArtModel{
+extension DocumentModel{
     enum Background: Equatable{
         case blank
         case url(URL)
