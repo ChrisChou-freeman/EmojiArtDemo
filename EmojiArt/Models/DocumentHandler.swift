@@ -12,6 +12,7 @@ import SwiftUI
 class DocumentHandler: ObservableObject {
     @Published private(set) var emojiArt: DocumentModel {
         didSet {
+            scheduleAutoSave()
             if self.background != oldValue.background{
                 fetchBackgroundImageDataIfNeccessary()
             }
@@ -21,9 +22,42 @@ class DocumentHandler: ObservableObject {
     @Published var backgroundImageFetchStatus = BackgroundImageFetchStatus.idle
     var emojis: [DocumentModel.Emoji] {self.emojiArt.emojis}
     var background: DocumentModel.Background {self.emojiArt.background}
+    private var autosaveTimer: Timer?
     
     init(){
-        self.emojiArt = DocumentModel()
+        if let url = SaveManager.url, let document = try? DocumentModel(url: url){
+            self.emojiArt = document
+            fetchBackgroundImageDataIfNeccessary()
+        }else{
+            self.emojiArt = DocumentModel()
+        }
+    }
+    
+    private func scheduleAutoSave(){
+        autosaveTimer?.invalidate()
+        autosaveTimer = Timer.scheduledTimer(withTimeInterval: SaveManager.coalescingInterval, repeats: false){ _ in
+            self.autoSave()
+        }
+    }
+    
+    private func autoSave(){
+        if let url = SaveManager.url{
+            save(to: url)
+        }
+    }
+    
+    private func save(to url: URL){
+        let thisfunction = "\(String(describing: self)).\(#function)"
+        do{
+            let data = try emojiArt.json()
+            print("\(thisfunction) json = \(String(data: data, encoding: .utf8) ?? "nil")")
+            try data.write(to: url)
+            print("\(thisfunction) success!")
+        }catch let encodingError where encodingError is EncodingError{
+            print("\(thisfunction) couldn't encode json: \(encodingError.localizedDescription)")
+        }catch{
+            print("\(thisfunction) error = \(error)")
+        }
     }
     
     private func fetchBackgroundImageDataIfNeccessary(){
@@ -53,7 +87,6 @@ class DocumentHandler: ObservableObject {
     
     func setBackground(_ background: DocumentModel.Background) {
         self.emojiArt.background = background
-        print("background set to \(background)")
     }
     
     func addEmoji(_ emoji: String, at location: (x: Int, y: Int), size: CGFloat){
@@ -88,6 +121,23 @@ class DocumentHandler: ObservableObject {
                 self.emojiArt.emojis[index].size = Int((CGFloat(self.emojiArt.emojis[index].size) * scale).rounded(.toNearestOrAwayFromZero))
             }
         }
+    }
+    
+    func removeEmojiWithIDs(with emojiIDs: [Int]){
+        for emojiID in emojiIDs{
+            if let removeIndex = self.emojiArt.emojis.firstIndex(where: {$0.id == emojiID}){
+                self.emojiArt.emojis.remove(at: removeIndex)
+            }
+        }
+    }
+    
+    private struct SaveManager{
+        static let fileName = "AutoSaved.emojiart"
+        static var url: URL? {
+            let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+            return documentDirectory?.appendingPathComponent(fileName)
+        }
+        static let coalescingInterval = 5.0
     }
     
     enum BackgroundImageFetchStatus {
