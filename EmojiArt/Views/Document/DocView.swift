@@ -9,15 +9,21 @@ import SwiftUI
 
 struct DocView: View {
     @EnvironmentObject var document: DocumentHandler
-    let defaultEmojiFontSize: CGFloat = 40
-    @State var steadyStatePanOffset = CGSize.zero
+    @ScaledMetric  var defaultEmojiFontSize: CGFloat = 40
+    
+    @SceneStorage("DocView.steadyStatePanOffset")
+    var steadyStatePanOffset = CGSize.zero
     @GestureState var gesturePanOffset = CGSize.zero
-    @State var steadyStateZoomScale: CGFloat = 1
+    
+    @SceneStorage("DocView.steadyStateZoomScale")
+    var steadyStateZoomScale: CGFloat = 1
     @GestureState var gestureZoomScale: CGFloat = 1
     // for select element
     @State var selectedElements: [Int] = []
     @GestureState var selectedOffset: CGSize = CGSize.zero
     @GestureState var selectedZoom: CGFloat = 1
+    @State var alertToShow: IdentifiableAlert?
+    @State var autozoom = false
     
     var body: some View {
         VStack(spacing: 0) {

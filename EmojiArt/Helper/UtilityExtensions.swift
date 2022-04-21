@@ -14,8 +14,25 @@ extension Collection where Element: Identifiable {
     }
 }
 
+extension RangeReplaceableCollection where Element: Identifiable {
+    subscript(_ element: Element) -> Element{
+        get{
+            if let index = index(matching: element){
+                return self[index]
+            }else{
+                return element
+            }
+        }
+        set{
+            if let index = index(matching: element) {
+                replaceSubrange(index...index, with: [newValue])
+            }
+        }
+    }
+}
+
 extension CGRect {
-    var center: CGPoint{
+    var center: CGPoint {
         CGPoint(x: midX, y: midY)
     }
 }
@@ -140,3 +157,33 @@ struct OptionalImage: View{
     }
 }
 
+
+extension String {
+    var removingDuplicateCharacters: String {
+        reduce(into: "") { sofar, element in
+            if !sofar.contains(element) {
+                sofar.append(element)
+            }
+        }
+    }
+}
+
+extension RawRepresentable where Self: Codable {
+    public var rawValue: String {
+        if let json = try? JSONEncoder().encode(self), let string = String(data: json, encoding: .utf8) {
+            return string
+        } else{
+            return ""
+        }
+    }
+    public init?(rawValue: String) {
+        if let value = try? JSONDecoder().decode(Self.self, from: Data(rawValue.utf8)) {
+            self = value
+        } else {
+            return nil
+        }
+    }
+}
+
+extension CGSize: RawRepresentable {}
+extension CGFloat: RawRepresentable {}

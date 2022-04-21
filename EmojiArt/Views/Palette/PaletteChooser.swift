@@ -8,16 +8,20 @@
 import SwiftUI
 
 struct PaletteChooser: View {
-    @EnvironmentObject var pallette: PaletteHandler
+    @EnvironmentObject var paletteHandler: PaletteHandler
     var EmojiFontSize: CGFloat
-    @State private var chosenPaletteIndex = 0
+    
+    @SceneStorage("PaletteChooser.chosenPaletteIndex")
+    private var chosenPaletteIndex = 0
     var emojiFont: Font{
         .system(size: EmojiFontSize)
     }
+    @State private var editing = false
+    @State private var managing = false
     var body: some View {
         HStack{
             paletteControButton
-            paletteView(for: pallette.palette(at: chosenPaletteIndex))
+            paletteView(for: paletteHandler.palette(at: chosenPaletteIndex))
         }
         .clipped()
         .padding()
@@ -31,23 +35,37 @@ struct PaletteChooser: View {
         }
         .id(palette.id)
         .transition(rollTransition)
+        .popover(isPresented: $editing){
+            PaletteEditor(palette: $paletteHandler.pallettes[chosenPaletteIndex])
+        }
+        .sheet(isPresented: $managing){
+            PaletteList()
+        }
     }
     
     @ViewBuilder
-    var contextMenu: some View{
+    var contextMenu: some View {
+        AnimatedActionButton(title: "Edit", sysemImage: "pencil"){
+            editing = true
+        }
         AnimatedActionButton(title: "New", sysemImage: "plus"){
-            pallette.insertPalette(named: "New", emojis: "", at: chosenPaletteIndex)
+            paletteHandler.insertPalette(named: "New", emojis: "", at: chosenPaletteIndex)
+            editing = true
+        }
+        AnimatedActionButton(title: "Manager", sysemImage: "slider.vertical.3"){
+            managing = true
         }
         AnimatedActionButton(title: "Delete", sysemImage: "minus.circle"){
-            chosenPaletteIndex = pallette.removePalette(at: chosenPaletteIndex)
+            chosenPaletteIndex = paletteHandler.removePalette(at: chosenPaletteIndex)
         }
+        gotoMenu
     }
     
     var gotoMenu: some View{
         Menu{
-            ForEach(pallette.pallettes) { palette in
+            ForEach(paletteHandler.pallettes) { palette in
                 AnimatedActionButton(title: palette.name) {
-                    if let index = pallette.pallettes.index(matching: palette){
+                    if let index = paletteHandler.pallettes.index(matching: palette){
                         chosenPaletteIndex = index
                     }
                 }
@@ -60,7 +78,7 @@ struct PaletteChooser: View {
     var paletteControButton: some View{
         Button{
             withAnimation{
-                chosenPaletteIndex = (chosenPaletteIndex + 1) % pallette.pallettes.count
+                chosenPaletteIndex = (chosenPaletteIndex + 1) % paletteHandler.pallettes.count
             }
         }label: {
             Image(systemName: "paintpalette")

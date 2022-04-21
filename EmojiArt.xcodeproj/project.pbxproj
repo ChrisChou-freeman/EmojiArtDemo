@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22047BE9280FCE210012FBFF /* PaletteList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22047BE8280FCE210012FBFF /* PaletteList.swift */; };
+		22047BEB280FE1F70012FBFF /* Windows.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22047BEA280FE1F70012FBFF /* Windows.swift */; };
 		2213615D27F6C88600470124 /* DocumentModel.Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2213615C27F6C88600470124 /* DocumentModel.Background.swift */; };
 		2213615F27F6CA5C00470124 /* DocumentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2213615E27F6CA5C00470124 /* DocumentHandler.swift */; };
 		2213616127F6CEF300470124 /* UtilityExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2213616027F6CEF300470124 /* UtilityExtensions.swift */; };
@@ -24,6 +26,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		22047BE8280FCE210012FBFF /* PaletteList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteList.swift; sourceTree = "<group>"; };
+		22047BEA280FE1F70012FBFF /* Windows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Windows.swift; sourceTree = "<group>"; };
+		22047BED2810246D0012FBFF /* EmojiArt.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EmojiArt.entitlements; sourceTree = "<group>"; };
 		2213615C27F6C88600470124 /* DocumentModel.Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentModel.Background.swift; sourceTree = "<group>"; };
 		2213615E27F6CA5C00470124 /* DocumentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentHandler.swift; sourceTree = "<group>"; };
 		2213616027F6CEF300470124 /* UtilityExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilityExtensions.swift; sourceTree = "<group>"; };
@@ -52,13 +57,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		22047BEC280FF94F0012FBFF /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				2213615E27F6CA5C00470124 /* DocumentHandler.swift */,
+				228D2B6F280E8731005D1967 /* PaletteHandler.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		2214B7DD280AB9F600EDCF7F /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				225205B327F5FCF7003EDEEB /* DocumentModel.swift */,
 				2213615C27F6C88600470124 /* DocumentModel.Background.swift */,
-				2213615E27F6CA5C00470124 /* DocumentHandler.swift */,
-				228D2B6F280E8731005D1967 /* PaletteHandler.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -101,7 +113,9 @@
 		225205A427F5FCB6003EDEEB /* EmojiArt */ = {
 			isa = PBXGroup;
 			children = (
+				22047BED2810246D0012FBFF /* EmojiArt.entitlements */,
 				225205A527F5FCB6003EDEEB /* EmojiArtApp.swift */,
+				22047BEC280FF94F0012FBFF /* ViewModels */,
 				2214B7DF280ABAA800EDCF7F /* Helper */,
 				2214B7DD280AB9F600EDCF7F /* Models */,
 				2214B7DE280ABA9800EDCF7F /* Views */,
@@ -123,6 +137,7 @@
 			isa = PBXGroup;
 			children = (
 				228D2B76280ED29B005D1967 /* Button.swift */,
+				22047BEA280FE1F70012FBFF /* Windows.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -132,6 +147,7 @@
 			children = (
 				228D2B73280EB0B6005D1967 /* PaletteChooser.swift */,
 				228D2B7A280ED75C005D1967 /* PaletteEditor.swift */,
+				22047BE8280FCE210012FBFF /* PaletteList.swift */,
 			);
 			path = Palette;
 			sourceTree = "<group>";
@@ -215,8 +231,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22047BE9280FCE210012FBFF /* PaletteList.swift in Sources */,
 				225205A827F5FCB6003EDEEB /* DocView.swift in Sources */,
 				225205A627F5FCB6003EDEEB /* EmojiArtApp.swift in Sources */,
+				22047BEB280FE1F70012FBFF /* Windows.swift in Sources */,
 				22572113280AC48C0013DEF7 /* DocView.DocBody.swift in Sources */,
 				228D2B70280E8731005D1967 /* PaletteHandler.swift in Sources */,
 				2213616127F6CEF300470124 /* UtilityExtensions.swift in Sources */,
@@ -352,6 +370,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = EmojiArt/EmojiArt.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"EmojiArt/Preview Content\"";
@@ -381,6 +400,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = EmojiArt/EmojiArt.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"EmojiArt/Preview Content\"";

@@ -63,15 +63,43 @@ extension DocView{
                 self.drop(providers: providers, at: location, in: geometry)
             }
             .gesture(self.panGesture().simultaneously(with: self.zoomGesture()))
+            .alert(item: $alertToShow){ alert in
+                alert.alert()
+            }
+            .onChange(of: document.backgroundImageFetchStatus){ status in
+                switch status{
+                    case .failed(let url):
+                        showBackgroudImageFetchFailedAlert(url)
+                    default:
+                        break
+                }
+            }
+            .onChange(of: document.backgroundImage){ image in
+                if autozoom{
+                    zoomToFit(image, in: geometry.size)
+                }
+            }
         }
+    }
+    
+    private func showBackgroudImageFetchFailedAlert(_ url: URL){
+        alertToShow = IdentifiableAlert(id: "fetch failed: " + url.absoluteString, alert: {
+            Alert(
+                title: Text("Backgroud Image Fetch"),
+                message: Text("Couldn't load image from \(url)."),
+                dismissButton: .default(Text("OK"))
+            )
+        })
     }
     
     func drop(providers: [NSItemProvider], at location: CGPoint, in geometry: GeometryProxy) -> Bool {
         var found = providers.loadObjects(ofType: URL.self) { url in
+            autozoom = true
             self.document.setBackground(.url(url.imageURL))
         }
         if !found{
             found = providers.loadObjects(ofType: UIImage.self){ image in
+                autozoom = true
                 if let data = image.jpegData(compressionQuality: 1.0) {
                     document.setBackground(.imageData(data))
                 }

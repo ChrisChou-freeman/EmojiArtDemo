@@ -5,8 +5,9 @@
 //  Created by ChrisChou on 2022/4/1.
 //
 
-import Foundation
+//import Foundation
 import SwiftUI
+import Combine
 
 
 class DocumentHandler: ObservableObject {
@@ -60,23 +61,41 @@ class DocumentHandler: ObservableObject {
         }
     }
     
+    
+    // use 2021 new feature async/await reimplement
+    private var backgroundImageFetchCancellable: AnyCancellable?
     private func fetchBackgroundImageDataIfNeccessary(){
         self.backgroundImage = nil
         switch self.emojiArt.background {
         case .url(let url):
             self.backgroundImageFetchStatus = .fetching
-            DispatchQueue.global(qos: .userInitiated).async {
-                let imageData = try? Data(contentsOf: url)
-                DispatchQueue.main.async { [weak self] in
-                    // handle muitiple image drag to background
-                    if self?.emojiArt.background == DocumentModel.Background.url(url){
-                        self?.backgroundImageFetchStatus = .idle
-                        if imageData != nil {
-                            self?.backgroundImage = UIImage(data: imageData!)
-                        }
+                backgroundImageFetchCancellable?.cancel()
+                let session = URLSession.shared
+                let publisher = session.dataTaskPublisher(for: url)
+                    .map{ (data, urlRep) in UIImage(data: data) }
+                    .replaceError(with: nil)
+                    .receive(on: DispatchQueue.main)
+                backgroundImageFetchCancellable = publisher
+                    .sink{ [weak self] image in
+                        self?.backgroundImage = image
+                        self?.backgroundImageFetchStatus = (image != nil) ? .idle : .failed(url)
                     }
-                }
-            }
+                
+//            DispatchQueue.global(qos: .userInitiated).async {
+//                let imageData = try? Data(contentsOf: url)
+//                DispatchQueue.main.async { [weak self] in
+//                    // handle muitiple image drag to background
+//                    if self?.emojiArt.background == DocumentModel.Background.url(url){
+//                        self?.backgroundImageFetchStatus = .idle
+//                        if imageData != nil {
+//                            self?.backgroundImage = UIImage(data: imageData!)
+//                        }
+//                        if self?.backgroundImage == nil {
+//                            self?.backgroundImageFetchStatus = .failed(url)
+//                        }
+//                    }
+//                }
+//            }
         case .imageData(let data):
             self.backgroundImage = UIImage(data: data)
         case .blank:
@@ -140,8 +159,9 @@ class DocumentHandler: ObservableObject {
         static let coalescingInterval = 5.0
     }
     
-    enum BackgroundImageFetchStatus {
+    enum BackgroundImageFetchStatus: Equatable {
         case idle
         case fetching
+        case failed(URL)
     }
 }
