@@ -79,6 +79,12 @@ extension DocView{
                     zoomToFit(image, in: geometry.size)
                 }
             }
+            .toolbar{
+                UndoButton(
+                    undo: undoManager?.optionalUndoMenuItemTitle,
+                    redo: undoManager?.optionalRedoMenuItemTitle
+                )
+            }
         }
     }
     
@@ -95,13 +101,13 @@ extension DocView{
     func drop(providers: [NSItemProvider], at location: CGPoint, in geometry: GeometryProxy) -> Bool {
         var found = providers.loadObjects(ofType: URL.self) { url in
             autozoom = true
-            self.document.setBackground(.url(url.imageURL))
+            self.document.setBackground(.url(url.imageURL), undoManager: undoManager)
         }
         if !found{
             found = providers.loadObjects(ofType: UIImage.self){ image in
                 autozoom = true
                 if let data = image.jpegData(compressionQuality: 1.0) {
-                    document.setBackground(.imageData(data))
+                    document.setBackground(.imageData(data), undoManager: undoManager)
                 }
             }
         }
@@ -111,7 +117,8 @@ extension DocView{
                     self.document.addEmoji(
                         String(emoji),
                         at: self.convertToEmojiCoordinates(location, geometry: geometry),
-                        size: self.defaultEmojiFontSize / self.zoomScale
+                        size: self.defaultEmojiFontSize / self.zoomScale,
+                        undoManager: undoManager
                     )
                 }
             }

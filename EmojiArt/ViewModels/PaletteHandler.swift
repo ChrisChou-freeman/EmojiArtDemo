@@ -22,9 +22,12 @@ struct Palette: Identifiable, Codable, Hashable {
 
 class PaletteHandler: ObservableObject {
     let name: String
+    var isInit = false
     @Published var pallettes: [Palette] = [] {
         didSet{
-            storeInFile()
+            if !isInit{
+                storeInFile()
+            }
         }
     }
     private var userDefaultsKey: String {
@@ -35,11 +38,11 @@ class PaletteHandler: ObservableObject {
         self.name = name
         restoreFromFile()
         if pallettes.isEmpty{
+            isInit = true
             insertPalette(named: "Vehicles", emojis: "🚑🚒🚓🚔🚕🚖🚗🚘🚙🛻🚚🚛🏎🏍🛵🛺")
             insertPalette(named: "Food", emojis: "🍇🍈🍉🍊🍋🍌🍍🥭🍎🍏🍐🍑🍒🍓🫐🥝")
             insertPalette(named: "face", emojis: "😀🙃😉😊😇😃😄😁😆😅🤣😂🙂😕😟🙁")
-        }else{
-            print("load from file: ", pallettes)
+            isInit = false
         }
     }
     
@@ -60,7 +63,8 @@ class PaletteHandler: ObservableObject {
     private func restoreFromFile() {
         let thisfunction = "\(String(describing: self)).\(#function)"
         do{
-            if let url = SaveManager.url{
+            let fileManager = FileManager.default
+            if let url = SaveManager.url, fileManager.fileExists(atPath: url.path){
                 self.pallettes = try loadJsonToStruct(url)
             }
         }catch let decodingError where decodingError is DecodingError{

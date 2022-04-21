@@ -18,6 +18,7 @@ struct PaletteEditor: View {
         }
         .navigationTitle("Edit \(palette.name)")
         .frame(minWidth: 300,  minHeight: 350)
+        
     }
     var nameSection: some View {
         Section(header: Text("Name")){

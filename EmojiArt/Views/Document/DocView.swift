@@ -8,7 +8,7 @@ import SwiftUI
 
 
 struct DocView: View {
-    @EnvironmentObject var document: DocumentHandler
+    @ObservedObject var document: DocumentHandler
     @ScaledMetric  var defaultEmojiFontSize: CGFloat = 40
     
     @SceneStorage("DocView.steadyStatePanOffset")
@@ -24,6 +24,7 @@ struct DocView: View {
     @GestureState var selectedZoom: CGFloat = 1
     @State var alertToShow: IdentifiableAlert?
     @State var autozoom = false
+    @Environment(\.undoManager) var undoManager
     
     var body: some View {
         VStack(spacing: 0) {
@@ -39,7 +40,7 @@ struct DocView: View {
     
     var deleteButton: some View{
         Button{
-            self.document.removeEmojiWithIDs(with: selectedElements)
+            self.document.removeEmojiWithIDs(with: selectedElements, undoManager: undoManager)
             self.selectedElements.removeAll()
         }label: {
             Image(systemName: "delete.left.fill")
@@ -57,8 +58,7 @@ struct DocView: View {
 struct ContentView_Previews: PreviewProvider {
     static let document = DocumentHandler()
     static var previews: some View {
-        DocView()
-            .environmentObject(document)
+        DocView(document: document)
             .previewInterfaceOrientation(.landscapeLeft)
     }
 }
