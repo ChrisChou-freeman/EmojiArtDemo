@@ -12,7 +12,7 @@ struct AnimatedActionButton: View{
     var sysemImage: String?
     let action: () -> Void
     
-    var body: some View{
+    var body: some View {
         Button{
             withAnimation{
                 action()

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 
 extension DocView{
@@ -21,11 +22,10 @@ extension DocView{
         GeometryReader{
             geometry in
             ZStack{
-                Color.white.overlay(
-                    OptionalImage(uiImage: self.document.backgroundImage)
-                        .scaleEffect(self.zoomScale)
-                        .position(self.convertFromEmojiCoordinates((0, 0), in: geometry))
-                )
+                Color.white
+                OptionalImage(uiImage: self.document.backgroundImage)
+                    .scaleEffect(self.zoomScale)
+                    .position(self.convertFromEmojiCoordinates((0, 0), in: geometry))
                 .gesture(doubleTapToZoom(in: geometry.size))
                 .gesture(singleTapToUnselete())
                 if self.document.backgroundImageFetchStatus == .fetching{
@@ -79,12 +79,77 @@ extension DocView{
                     zoomToFit(image, in: geometry.size)
                 }
             }
-            .toolbar{
-                UndoButton(
-                    undo: undoManager?.optionalUndoMenuItemTitle,
-                    redo: undoManager?.optionalRedoMenuItemTitle
-                )
+            .compactableToolbar {
+                AnimatedActionButton(title: "Paste Background", sysemImage: "doc.on.clipboard"){
+                    pasteBackground()
+                }
+                if Camera.isAvailable{
+                    Button{
+                        backgroundPicker = .camera
+                    }label: {
+                        Label("Take Photo", systemImage: "camera")
+                    }
+                }
+                Button{
+                    backgroundPicker = .library
+                }label: {
+                    Label("Picke Photos", systemImage: "photo")
+                }
+                if let undoManager = undoManager {
+                    Button{
+                        undoManager.undo()
+                    }label: {
+                        Label("Undo", systemImage: "arrow.uturn.left")
+                    }
+
+                    Button{
+                        undoManager.redo()
+                    }label: {
+                        Label("Redo", systemImage: "arrow.uturn.right")
+                    }
+                }
             }
+            .sheet(item: $backgroundPicker){ pickerType in
+                switch pickerType{
+                    case .camera:
+                        Camera(handlePickedImage: {image in handlePickedBackgroundImage(image)})
+                    case .library:
+                        PhotoLibrary(handlePickedImage: {image in handlePickedBackgroundImage(image)})
+                }
+
+            }
+        }
+    }
+
+    private func handlePickedBackgroundImage(_ image: UIImage?){
+        autozoom = true
+        if let imageData = image?.jpegData(compressionQuality: 1.0) {
+            document.setBackground(.imageData(imageData), undoManager: undoManager)
+        }
+        backgroundPicker = nil
+    }
+
+    enum BackgroundPickerType: String, Identifiable{
+        var id: String { rawValue }
+        case camera
+        case library
+    }
+
+
+    private func pasteBackground() {
+        autozoom = true
+        if let imageData = UIPasteboard.general.image?.jpegData(compressionQuality: 1.0) {
+            document.setBackground(.imageData(imageData), undoManager: undoManager)
+        }else if let url = UIPasteboard.general.url?.imageURL{
+            document.setBackground(.url(url), undoManager: undoManager)
+        }else {
+            alertToShow = IdentifiableAlert(id: "Paste Backgroud Error", alert: {
+                Alert(
+                    title: Text("Paste Backgroud"),
+                    message: Text("There is no image currently on the pasteboard"),
+                    dismissButton: .default(Text("OK"))
+                )
+            })
         }
     }
     

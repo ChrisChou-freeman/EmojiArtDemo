@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		22047BE9280FCE210012FBFF /* PaletteList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22047BE8280FCE210012FBFF /* PaletteList.swift */; };
-		22047BEB280FE1F70012FBFF /* Windows.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22047BEA280FE1F70012FBFF /* Windows.swift */; };
+		22047BEB280FE1F70012FBFF /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22047BEA280FE1F70012FBFF /* View.swift */; };
 		2213615D27F6C88600470124 /* DocumentModel.Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2213615C27F6C88600470124 /* DocumentModel.Background.swift */; };
 		2213615F27F6CA5C00470124 /* DocumentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2213615E27F6CA5C00470124 /* DocumentHandler.swift */; };
 		2213616127F6CEF300470124 /* UtilityExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2213616027F6CEF300470124 /* UtilityExtensions.swift */; };
@@ -18,16 +18,18 @@
 		225205AD27F5FCB7003EDEEB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 225205AC27F5FCB7003EDEEB /* Preview Assets.xcassets */; };
 		225205B427F5FCF7003EDEEB /* DocumentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225205B327F5FCF7003EDEEB /* DocumentModel.swift */; };
 		22572113280AC48C0013DEF7 /* DocView.DocBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22572112280AC48C0013DEF7 /* DocView.DocBody.swift */; };
+		227BE6B82812CD1000341467 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227BE6B72812CD1000341467 /* Camera.swift */; };
 		228D2B70280E8731005D1967 /* PaletteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228D2B6F280E8731005D1967 /* PaletteHandler.swift */; };
 		228D2B72280EA37F005D1967 /* JsonFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228D2B71280EA37F005D1967 /* JsonFile.swift */; };
 		228D2B74280EB0B6005D1967 /* PaletteChooser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228D2B73280EB0B6005D1967 /* PaletteChooser.swift */; };
 		228D2B77280ED29B005D1967 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228D2B76280ED29B005D1967 /* Button.swift */; };
 		228D2B7B280ED75C005D1967 /* PaletteEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228D2B7A280ED75C005D1967 /* PaletteEditor.swift */; };
+		22CEBE5528151C230084B997 /* PhotoLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22CEBE5428151C230084B997 /* PhotoLibrary.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		22047BE8280FCE210012FBFF /* PaletteList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteList.swift; sourceTree = "<group>"; };
-		22047BEA280FE1F70012FBFF /* Windows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Windows.swift; sourceTree = "<group>"; };
+		22047BEA280FE1F70012FBFF /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		22047BED2810246D0012FBFF /* EmojiArt.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EmojiArt.entitlements; sourceTree = "<group>"; };
 		2213615C27F6C88600470124 /* DocumentModel.Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentModel.Background.swift; sourceTree = "<group>"; };
 		2213615E27F6CA5C00470124 /* DocumentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentHandler.swift; sourceTree = "<group>"; };
@@ -39,11 +41,13 @@
 		225205AC27F5FCB7003EDEEB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		225205B327F5FCF7003EDEEB /* DocumentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentModel.swift; sourceTree = "<group>"; };
 		22572112280AC48C0013DEF7 /* DocView.DocBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocView.DocBody.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		227BE6B72812CD1000341467 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		228D2B6F280E8731005D1967 /* PaletteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteHandler.swift; sourceTree = "<group>"; };
 		228D2B71280EA37F005D1967 /* JsonFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonFile.swift; sourceTree = "<group>"; };
 		228D2B73280EB0B6005D1967 /* PaletteChooser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteChooser.swift; sourceTree = "<group>"; };
 		228D2B76280ED29B005D1967 /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		228D2B7A280ED75C005D1967 /* PaletteEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteEditor.swift; sourceTree = "<group>"; };
+		22CEBE5428151C230084B997 /* PhotoLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibrary.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,7 +91,8 @@
 		2214B7DF280ABAA800EDCF7F /* Helper */ = {
 			isa = PBXGroup;
 			children = (
-				228D2B75280ED278005D1967 /* Views */,
+				227BE6B62812CCFE00341467 /* Views */,
+				228D2B75280ED278005D1967 /* ExtensionsViews */,
 				2213616027F6CEF300470124 /* UtilityExtensions.swift */,
 				228D2B71280EA37F005D1967 /* JsonFile.swift */,
 			);
@@ -133,13 +138,22 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		228D2B75280ED278005D1967 /* Views */ = {
+		227BE6B62812CCFE00341467 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				227BE6B72812CD1000341467 /* Camera.swift */,
+				22CEBE5428151C230084B997 /* PhotoLibrary.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		228D2B75280ED278005D1967 /* ExtensionsViews */ = {
 			isa = PBXGroup;
 			children = (
 				228D2B76280ED29B005D1967 /* Button.swift */,
-				22047BEA280FE1F70012FBFF /* Windows.swift */,
+				22047BEA280FE1F70012FBFF /* View.swift */,
 			);
-			path = Views;
+			path = ExtensionsViews;
 			sourceTree = "<group>";
 		};
 		228D2B78280ED6CE005D1967 /* Palette */ = {
@@ -234,7 +248,7 @@
 				22047BE9280FCE210012FBFF /* PaletteList.swift in Sources */,
 				225205A827F5FCB6003EDEEB /* DocView.swift in Sources */,
 				225205A627F5FCB6003EDEEB /* EmojiArtApp.swift in Sources */,
-				22047BEB280FE1F70012FBFF /* Windows.swift in Sources */,
+				22047BEB280FE1F70012FBFF /* View.swift in Sources */,
 				22572113280AC48C0013DEF7 /* DocView.DocBody.swift in Sources */,
 				228D2B70280E8731005D1967 /* PaletteHandler.swift in Sources */,
 				2213616127F6CEF300470124 /* UtilityExtensions.swift in Sources */,
@@ -242,6 +256,8 @@
 				2213615F27F6CA5C00470124 /* DocumentHandler.swift in Sources */,
 				225205B427F5FCF7003EDEEB /* DocumentModel.swift in Sources */,
 				228D2B7B280ED75C005D1967 /* PaletteEditor.swift in Sources */,
+				227BE6B82812CD1000341467 /* Camera.swift in Sources */,
+				22CEBE5528151C230084B997 /* PhotoLibrary.swift in Sources */,
 				2213615D27F6C88600470124 /* DocumentModel.Background.swift in Sources */,
 				228D2B72280EA37F005D1967 /* JsonFile.swift in Sources */,
 				228D2B77280ED29B005D1967 /* Button.swift in Sources */,
@@ -382,6 +398,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = EmojiArt/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "we will use your Camera";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
@@ -415,6 +432,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = EmojiArt/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "we will use your Camera";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;

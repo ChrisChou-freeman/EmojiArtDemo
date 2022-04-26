@@ -25,6 +25,7 @@ struct DocView: View {
     @State var alertToShow: IdentifiableAlert?
     @State var autozoom = false
     @Environment(\.undoManager) var undoManager
+    @State var backgroundPicker: BackgroundPickerType?
     
     var body: some View {
         VStack(spacing: 0) {
